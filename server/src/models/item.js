@@ -14,8 +14,8 @@ const itemSchema = new mongoose.Schema(
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
       ref: "Vendor",
+      required: true,
     },
     description: {
       type: String,
@@ -39,7 +39,7 @@ const itemSchema = new mongoose.Schema(
     },
     status: {
       Type: Boolean,
-      default: true, //in stock etc
+      default: false, 
     },
   },
   {
