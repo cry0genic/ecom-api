@@ -1,10 +1,5 @@
 const mongoose = require("mongoose");
 
-const Item = require("./item");
-const Customer = require("./customer");
-const Vendor = require("./vendor");
-const Order = require("./order");
-
 const cartSchema = new mongoose.Schema(
   {
     owner: {

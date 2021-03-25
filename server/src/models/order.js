@@ -1,10 +1,5 @@
 const mongoose = require("mongoose");
 
-const Item = require("./item");
-const Customer = require("./customer");
-const Vendor = require("./vendor");
-const Cart = require("./cart");
-
 const orderSchema = new mongoose.Schema({
   item: {
     type: mongoose.Schema.Types.ObjectId,

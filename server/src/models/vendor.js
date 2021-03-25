@@ -4,9 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const Item = require("./item");
-const Customer = require("./customer");
 const Order = require("./order");
-const Cart = require("./cart");
 
 const vendorSchema = new mongoose.Schema(
   {
@@ -133,6 +131,6 @@ vendorSchema.pre("remove", async function (next) {
   await Order.deleteMany({ vendor: vendor._id });
 });
 
-const vendor = mongoose.model("vendor", vendorSchema);
+const Vendor = mongoose.model("Vendor", vendorSchema);
 
-module.exports = vendor;
+module.exports = Vendor;

@@ -1,6 +1,6 @@
 ## TODO:
 
-- [x] Vendor Reg / Login / Logout /Edit:Self-Profile / Edit:Self-Profile-Image
+- [x] Vendor Reg / Login / Logout / Edit:Self-Profile / Edit:Self-Profile-Image
 
 - [x] Customer Reg / Login / Logout / Edit:Self-Profile / Edit:Self-Profile-Image
 
@@ -17,8 +17,6 @@ item detail
 add to wish list 
 
 edit status/stock
-
-edit item image
 
 delete order
 

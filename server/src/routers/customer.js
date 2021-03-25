@@ -4,7 +4,9 @@ const multer = require("multer");
 const sharp = require("sharp");
 const Customer = require("../models/customer");
 const {sendWelcomeEmail, sendCancelationEmail} = require("../emails/customerEmail");
-const cAuth = require("../middleware/customerAuth");
+const cAuth = require("../middleware/cAuth");
+
+// Customer Reg / Login / Logout / Edit:Self-Profile / Edit:Self-Profile-Image
 
 router.post("/customer", async (req, res) => {
   const customer = new Customer(req.body);
@@ -128,10 +130,14 @@ router.get("/customer/:id/image", async (req, res) => {
       throw new Error();
     }
     res.set("Content-Type", "image/png");
-    res.send(customer.avatar);
+    res.send(customer.image);
   } catch (e) {
     res.status(404).send();
   }
 });
+
+//-----------------------------------------CUSTOMER VIEWS-----------------------------//
+
+
 
 module.exports = router;

@@ -3,9 +3,7 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const Item = require("./item");
 const Order = require("./order");
-const Vendor = require("./vendor");
 const Cart = require("./cart");
 
 const customerSchema = new mongoose.Schema(
@@ -13,7 +11,7 @@ const customerSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      trim: true, //change it later?
+      trim: true, 
     },
     address: {
       type: String,

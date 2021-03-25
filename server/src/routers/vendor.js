@@ -7,7 +7,9 @@ const {
   sendCancelationEmailtoVendor,
   sendWelcomeEmailtoVendor,
 } = require("../emails/vendorEmail");
-const vAuth = require("../middleware/vendorAuth");
+const vAuth = require("../middleware/vAuth");
+
+// Vendor Reg / Login / Logout / Edit:Self-Profile / Edit:Self-Profile-Image
 
 router.post("/vendor", async (req, res) => {
   const vendor = new Vendor(req.body);
@@ -138,4 +140,3 @@ router.get("/vendor/:id/image", async (req, res) => {
 });
 
 module.exports = router;
-

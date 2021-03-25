@@ -1,7 +1,11 @@
 const express = require("express");
 const router = new express.Router();
 const Item = require("../models/item");
-const vAuth = require("../middleware/vendorAuth");
+const vAuth = require("../middleware/vAuth");
+const multer = require("multer");
+const sharp = require("sharp");
+
+// Item Add/Remove/Edit by Vendor
 
 router.post("/item", vAuth, async (req, res) => {
   const item = new Item({
@@ -30,8 +34,7 @@ router.get("/item", vAuth, async (req, res) => {
     sort[parts[0]] = parts[1] === "desc" ? -1 : 1;
   }
   try {
-    await req.user
-      .populate({
+    await req.user.populate({
         path: "items",
         match,
         options: {
@@ -47,7 +50,7 @@ router.get("/item", vAuth, async (req, res) => {
   }
 });
 
-router.get("/item/:id", auth, async (req, res) => {
+router.get("/item/:id", vAuth, async (req, res) => {
   const _id = req.params.id;
 
   try {
@@ -61,7 +64,7 @@ router.get("/item/:id", auth, async (req, res) => {
   }
 });
 
-router.patch("/item/:id", auth, async (req, res) => {
+router.patch("/item/:id", vAuth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ["name", "description", "cost", "image", "quantity"];
   const isValidOperation = updates.every((update) =>
@@ -91,7 +94,7 @@ router.patch("/item/:id", auth, async (req, res) => {
   }
 });
 
-router.delete("/item/:id", auth, async (req, res) => {
+router.delete("/item/:id", vAuth, async (req, res) => {
   try {
     const item = await Item.findOneAndDelete({
       _id: req.params.id,
@@ -107,4 +110,53 @@ router.delete("/item/:id", auth, async (req, res) => {
   }
 });
 
+const upload = multer({
+  limits: {
+    fileSize: 9000000,
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      return cb(new Error("Please upload an image"));
+    }
+    cb(undefined, true);
+  },
+});
+
+router.post("/item/:id/image", vAuth, upload.single("image"), async (req, res) => {
+  const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer();
+  req.user.item[req.params.id].image = req.file.buffer;  
+  await req.user.item[req.params.id].save();
+  res.send();
+},
+(error, req, res, next) => {
+  res.status(400).send({
+    error: error.message, 
+  });
+}
+);
+
+// router.delete("/item/:id/image", vAuth, async (req, res) => {
+// req.user.image = undefined;
+// await req.user.save();
+// res.send();
+// });
+
+// router.get("/item/:id/image", async (req, res) => {
+// try {
+//   const item = await Item.findById(req.params.id);
+
+//   if (!item || !item.image) {
+//     throw new Error();
+//   }
+//   res.set("Content-Type", "image/png");
+//   res.send(item.image);
+// } catch (e) {
+//   res.status(404).send();
+// }
+// });
+
+
+
+
 module.exports = router;
+
