@@ -92,6 +92,50 @@ router.delete("/vendor/profile", vAuth, async (req, res) => {
   }
 });
 
-//profile pic
+const upload = multer({
+  limits: {
+    fileSize: 9000000,
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      return cb(new Error("Please upload an image"));
+    }
+    cb(undefined, true);
+  },
+});
 
+router.post("/vendor/profile/image", vAuth, upload.single("image"), async (req, res) => {
+    const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer();
+    req.user.image = req.file.buffer;
+    await req.user.save();
+    res.send();
+  },
+  (error, req, res, next) => {
+    res.status(400).send({
+      error: error.message,
+    });
+  }
+);
+
+router.delete("/vendor/profile/image", vAuth, async (req, res) => {
+  req.user.image = undefined;
+  await req.user.save();
+  res.send();
+});
+
+router.get("/vendor/:id/image", async (req, res) => {
+  try {
+    const vendor = await Vendor.findById(req.params.id);
+
+    if (!vendor || !vendor.image) {
+      throw new Error();
+    }
+    res.set("Content-Type", "image/png");
+    res.send(Vendor.image);
+  } catch (e) {
+    res.status(404).send();
+  }
+});
+
+module.exports = router;
 
