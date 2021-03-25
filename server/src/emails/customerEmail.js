@@ -8,7 +8,7 @@ const sendWelcomeEmail = (email, name) => {
   sgMail.send({
     to: email,
     from: "adityat1103@gmail.com",
-    subject: "Welcome to the Task Manager App",
+    subject: "Welcome to the E-Commerce App",
     text: `Welcome to the app, ${name}. Let me know how you get along with the app. `,
   });
 };

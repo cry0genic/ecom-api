@@ -2,37 +2,40 @@ const express = require("express");
 const router = new express.Router();
 const multer = require("multer");
 const sharp = require("sharp");
-const Customer = require("../models/customer");
-const { sendWelcomeEmail, sendCancelationEmail } = require("../emails/customerEmail");
-const cAuth = require("../middleware/customerAuth");
+const Vendor = require("../models/vendor");
+const {
+  sendCancelationEmailtoVendor,
+  sendWelcomeEmailtoVendor,
+} = require("../emails/vendorEmail");
+const vAuth = require("../middleware/vendorAuth");
 
-router.post("/customer", async (req, res) => {
-  const customer = new Customer(req.body);
+router.post("/vendor", async (req, res) => {
+  const vendor = new Vendor(req.body);
 
   try {
-    await customer.save();
-    sendWelcomeEmail(customer.email, customer.name);
-    const token = await customer.generateAuthToken();
-    res.status(201).send({ customer, token });
+    await vendor.save();
+    sendWelcomeEmailtoVendor(vendor.email, vendor.name);
+    const token = await vendor.generateAuthToken();
+    res.status(201).send({ vendor, token });
   } catch (e) {
     res.status(400).send(e);
   }
 });
 
-router.post("/customer/login", async (req, res) => {
+router.post("/vendor/login", async (req, res) => {
   try {
-    const customer = await Customer.findByCredentials(
+    const vendor = await Vendor.findByCredentials(
       req.body.email,
       req.body.password
     );
-    const token = await customer.generateAuthToken();
+    const token = await vendor.generateAuthToken();
     res.send({ user, token });
   } catch (e) {
     res.status(400).send(e);
   }
 });
 
-router.post("/customer/logout", cAuth, async (req, res) => {
+router.post("/vendor/logout", vAuth, async (req, res) => {
   try {
     req.user.token = req.user.tokens.filter((token) => {
       return token.token !== req.token;
@@ -44,7 +47,7 @@ router.post("/customer/logout", cAuth, async (req, res) => {
   }
 });
 
-router.post("/customer/logoutALL", cAuth, async (req, res) => {
+router.post("/vendor/logoutALL", vAuth, async (req, res) => {
   try {
     req.user.tokens = [];
     await req.user.save();
@@ -54,11 +57,11 @@ router.post("/customer/logoutALL", cAuth, async (req, res) => {
   }
 });
 
-router.get("/customer/profile", cAuth, async (req, res) => {
+router.get("/vendor/profile", vAuth, async (req, res) => {
   res.send(req.user);
 });
 
-router.patch("/customer/profile", cAuth, async (req, res) => {
+router.patch("/vendor/profile", vAuth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ["name", "address", "contact", "email", "password"];
   const isValidOperation = updates.every((update) => {
@@ -79,10 +82,10 @@ router.patch("/customer/profile", cAuth, async (req, res) => {
   }
 });
 
-router.delete("/customer/profile", cAuth, async (req, res) => {
+router.delete("/vendor/profile", vAuth, async (req, res) => {
   try {
     await req.user.remove();
-    sendCancelationEmail(req.user.email, req.user.name);
+    sendCancelationEmailtoVendor(req.user.email, req.user.name);
     res.status(req.user);
   } catch (e) {
     res.status(500).send();
@@ -90,3 +93,5 @@ router.delete("/customer/profile", cAuth, async (req, res) => {
 });
 
 //profile pic
+
+
