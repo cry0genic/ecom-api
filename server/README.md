@@ -18,8 +18,6 @@ add to wish list
 
 edit status/stock
 
-delete order
-
-place order
+delete order, place order
 
 add money

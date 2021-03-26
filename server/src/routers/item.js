@@ -2,6 +2,7 @@ const express = require("express");
 const router = new express.Router();
 const Item = require("../models/item");
 const vAuth = require("../middleware/vAuth");
+const cAuth = require('../middleware/cAuth')
 const multer = require("multer");
 const sharp = require("sharp");
 
@@ -155,8 +156,37 @@ router.post("/item/:id/image", vAuth, upload.single("image"), async (req, res) =
 // }
 // });
 
+//-----------------------------CUSTOMER VIEWS------------------------------//
 
+// router.get("/item", cAuth, async (req, res) => {
+//   const match = {};
+//   const sort = {};
 
+//   if (req.query.completed) {
+//     match.completed = req.query.completed === "true";
+//   }
 
+//   if (req.query.sortBy) {
+//     const parts = req.query.sortBy.split(":");
+//     sort[parts[0]] = parts[1] === "desc" ? -1 : 1;
+//   }
+//   try {
+//     await req.user.populate({
+//         path: "items",
+//         match,
+//         options: {
+//           limit: parseInt(req.query.limit),
+//           skip: parseInt(req.query.skip),
+//           sort,
+//         },
+//       })
+//       .execPopulate();
+//     res.send(req.user.items);
+//   } catch (e) {
+//     res.status(500).send(e);
+//   }
+// });
+
+//populate?
 module.exports = router;
 
