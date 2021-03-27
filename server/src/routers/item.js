@@ -2,7 +2,7 @@ const express = require("express");
 const router = new express.Router();
 const Item = require("../models/item");
 const vAuth = require("../middleware/vAuth");
-const cAuth = require('../middleware/cAuth')
+const cAuth = require("../middleware/cAuth");
 const multer = require("multer");
 const sharp = require("sharp");
 
@@ -35,7 +35,8 @@ router.get("/item", vAuth, async (req, res) => {
     sort[parts[0]] = parts[1] === "desc" ? -1 : 1;
   }
   try {
-    await req.user.populate({
+    await req.user
+      .populate({
         path: "items",
         match,
         options: {
@@ -124,41 +125,41 @@ const upload = multer({
 });
 
 router.post("/item/:id/image", vAuth, upload.single("image"), async (req, res) => {
-  const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer();
-  req.user.item[req.params.id].image = req.file.buffer;  
-  await req.user.item[req.params.id].save();
-  res.send();
-},
-(error, req, res, next) => {
-  res.status(400).send({
-    error: error.message, 
-  });
-}
+    const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer();
+    req.user.item[req.params.id].image = req.file.buffer;
+    await req.user.item[req.params.id].save(); //damn confused here
+    res.send();
+  },
+  (error, req, res, next) => {
+    res.status(400).send({
+      error: error.message,
+    });
+  }
 );
 
-// router.delete("/item/:id/image", vAuth, async (req, res) => {
-// req.user.image = undefined;
-// await req.user.save();
-// res.send();
-// });
+router.delete("/item/:id/image", vAuth, async (req, res) => {
+  req.user.item[req.params.id].image = undefined;
+  await req.user.save(); // await req.user.item[req.params.id].save()
+  res.send();
+});
 
-// router.get("/item/:id/image", async (req, res) => {
-// try {
-//   const item = await Item.findById(req.params.id);
+router.get("/item/:id/image", vAuth, async (req, res) => {
+  try {
+    const item = await Item.findById(req.params.id);
 
-//   if (!item || !item.image) {
-//     throw new Error();
-//   }
-//   res.set("Content-Type", "image/png");
-//   res.send(item.image);
-// } catch (e) {
-//   res.status(404).send();
-// }
-// });
+    if (!item || !item.image) {
+      throw new Error();
+    }
+    res.set("Content-Type", "image/png");
+    res.send(item.image);
+  } catch (e) {
+    res.status(404).send();
+  }
+});
 
 //-----------------------------CUSTOMER VIEWS------------------------------//
 
-// router.get("/item", cAuth, async (req, res) => {
+// router.get("/items", cAuth, async (req, res) => {
 //   const match = {};
 //   const sort = {};
 
@@ -187,6 +188,5 @@ router.post("/item/:id/image", vAuth, upload.single("image"), async (req, res) =
 //   }
 // });
 
-//populate?
-module.exports = router;
 
+module.exports = router;

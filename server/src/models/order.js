@@ -15,11 +15,11 @@ const orderSchema = new mongoose.Schema({
     required: true,
     ref: "Vendor",
   },
-  customer: {
+  customer: [{
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: "Customer",
-  },
+  }],
   date: {
     type: Date,
     required: true,
